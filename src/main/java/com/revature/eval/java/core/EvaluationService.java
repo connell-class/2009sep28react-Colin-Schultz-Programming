@@ -541,8 +541,19 @@ public class EvaluationService {
 		}
 
 		public String rotate(String string) {
-			// TODO Write an implementation for this method declaration
-			return null;
+			char[] output = new char[string.length()];
+			for (int i = 0; i < string.length(); i++) {
+				if(Character.isUpperCase(string.charAt(i))) {
+					output[i] = (char)((((int) string.charAt(i) + key - 65) % 26) +65);
+				}
+				else if (Character.isLowerCase(string.charAt(i))) {
+					output[i] = (char)((((int) string.charAt(i) + key - 97) % 26) +97);
+				}
+				else {
+					output[i] = string.charAt(i);
+				}
+			}
+			return new String(output);
 		}
 
 	}
@@ -560,8 +571,31 @@ public class EvaluationService {
 	 * @return
 	 */
 	public int calculateNthPrime(int i) {
-		// TODO Write an implementation for this method declaration
-		return 0;
+		
+		if(i < 1) {
+			throw new IllegalArgumentException();
+		}
+		
+		int currentNumber = 1;
+		int primesFound = 0;
+		
+		while(primesFound < i) {
+			currentNumber++;
+			boolean isPrime = true;
+			for (int j = 2; j < currentNumber; j++) {
+				if (currentNumber%j ==0) {
+					isPrime= false;
+					break;
+				}
+			}
+			if(isPrime) {
+				primesFound++;
+			}
+		}
+		return currentNumber;
+		
+		
+		
 	}
 
 	/**
@@ -597,8 +631,33 @@ public class EvaluationService {
 		 * @return
 		 */
 		public static String encode(String string) {
-			// TODO Write an implementation for this method declaration
-			return null;
+			char[] output = new char[string.length()];
+			string = string.toLowerCase();
+			for (int i = 0; i < string.length(); i++) {
+				if (Character.isLowerCase(string.charAt(i))) {
+					
+					output[i] = (char)(((122 - (int) string.charAt(i)) % 26) +97);
+					
+				}
+				else if(Character.isDigit(string.charAt(i))) {
+					
+					output[i] = string.charAt(i);
+				}
+			}
+			String newoutput = new String(output).replaceAll("\\W", "");
+			char[] trueoutput = new char[newoutput.length() + (newoutput.length()/5)];
+			int marker = 0;
+			for (int i = 0; i < newoutput.length(); i++) {
+				if (i % 5 == 0 && i != 0) {
+					trueoutput[marker] = ' ';
+					marker++;
+				}
+				trueoutput[marker] = newoutput.charAt(i);
+				marker++;
+
+			}
+			
+			return new String(trueoutput).trim();
 		}
 
 		/**
@@ -608,8 +667,22 @@ public class EvaluationService {
 		 * @return
 		 */
 		public static String decode(String string) {
-			// TODO Write an implementation for this method declaration
-			return null;
+			string = string.replaceAll("\\W","");
+			string = string.toLowerCase();
+			char[] output = new char[string.length()];
+			
+			for (int i = 0; i < string.length(); i++) {
+				if (Character.isLowerCase(string.charAt(i))) {
+					
+					output[i] = (char)(((97 - (int) string.charAt(i)) % 26) +122);
+					
+				}
+				else if(Character.isDigit(string.charAt(i))) {
+					
+					output[i] = string.charAt(i);
+				}
+			}
+			return new String(output);
 		}
 	}
 
@@ -636,7 +709,30 @@ public class EvaluationService {
 	 * @return
 	 */
 	public boolean isValidIsbn(String string) {
-		// TODO Write an implementation for this method declaration
+		string = string.replaceAll("\\W", "").toLowerCase();
+		int checksum = 0;
+		if(string.length() != 10) {
+			return false;
+		}
+		int mult = 10;
+		for (int i = 0; i < 10; i++) {
+			char[] check = new char[1];
+			check[0] = string.charAt(i);
+			if(Character.isDigit(string.charAt(i))){
+				checksum += Integer.parseInt(new String(check)) * mult;
+			}
+			else if(i == 9 && string.charAt(9)== 'x') {
+				
+				checksum +=10;
+			}
+			else {
+				return false;
+			}
+			mult --;
+		}
+		if (checksum % 11 == 0) {
+			return true;
+		}
 		return false;
 	}
 
@@ -654,7 +750,17 @@ public class EvaluationService {
 	 * @return
 	 */
 	public boolean isPangram(String string) {
-		// TODO Write an implementation for this method declaration
+		int letters = 0;
+		for (int i = 0; i < 26; i++) {
+			char letter = (char) ((int)'a' + i);
+			char[] check = {letter};
+			if(string.contains(new String(check))) {
+				letters++;
+			}
+		}
+		if (letters == 26) {
+			return true;
+		}
 		return false;
 	}
 
