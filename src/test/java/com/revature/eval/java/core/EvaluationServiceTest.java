@@ -187,6 +187,7 @@ public class EvaluationServiceTest {
 	public void invalidWithNonNumeric() {
 		expectedException.expect(IllegalArgumentException.class);
 		evaluationService.cleanPhoneNumber("123-abc-7890");
+		
 		expectedException.expect(IllegalArgumentException.class);
 		evaluationService.cleanPhoneNumber("123-@:!-7890");
 	}
@@ -244,7 +245,7 @@ public class EvaluationServiceTest {
 		expectedWordCount.put("one", 1);
 		expectedWordCount.put("two", 1);
 		expectedWordCount.put("three", 1);
-
+	
 		Map<String, Integer> actualWordCount = evaluationService.wordCount("one,\ntwo,\nthree");
 		assertEquals(expectedWordCount, actualWordCount);
 	}

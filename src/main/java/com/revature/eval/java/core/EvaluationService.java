@@ -1,6 +1,8 @@
 package com.revature.eval.java.core;
 
 import java.time.temporal.Temporal;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,8 +32,26 @@ public class EvaluationService {
 	 * @return
 	 */
 	public String acronym(String phrase) {
-		// TODO Write an implementation for this method declaration
-		return null;
+		char[] acronym = new char[phrase.length()];
+		boolean firstLetter = true;
+		int x = 0;
+		for (int i = 0; i < phrase.length(); i++) {
+			if (firstLetter == true) {
+				acronym[x] = phrase.charAt(i);
+				firstLetter = false;
+				x++;
+			}
+			else if (phrase.charAt(i)==' ' ||phrase.charAt(i)=='-') {
+				firstLetter = true;
+			}
+		}
+		char[] out = new char[x];
+		for (int i = 0; i < x; i++) {
+			out[i] = acronym[i];
+		}
+		
+		return new String(out).toUpperCase();
+		
 	}
 
 	/**
@@ -84,17 +104,30 @@ public class EvaluationService {
 		}
 
 		public boolean isEquilateral() {
-			// TODO Write an implementation for this method declaration
+			if( getSideOne() == getSideTwo() && getSideTwo() == getSideThree()) {
+				return true;
+			}
 			return false;
 		}
 
 		public boolean isIsosceles() {
-			// TODO Write an implementation for this method declaration
+			double a = getSideOne();
+			double b = getSideTwo();
+			double c = getSideThree();
+			if(a == b || a == c || b == c) {
+				return true;
+			}
 			return false;
 		}
 
 		public boolean isScalene() {
-			// TODO Write an implementation for this method declaration
+			double a = getSideOne();
+			double b = getSideTwo();
+			double c = getSideThree();
+			
+			if(a != b && a != c && b != c) {
+				return true;
+			}
 			return false;
 		}
 
@@ -116,8 +149,44 @@ public class EvaluationService {
 	 * @return
 	 */
 	public int getScrabbleScore(String string) {
-		// TODO Write an implementation for this method declaration
-		return 0;
+		int score = 0;
+		String one = "AEIOULNRST";
+		String two = "DG";
+		String three = "BCMP";
+		String four = "FHVWY";
+		String five = "K";
+		String eight = "JX";
+		String ten = "QZ";
+		for (int i = 0; i < string.length(); i++) {
+			char[] c =new char[1]; 
+			c[0] = string.charAt(i);
+		
+			if (one.contains(new String(c).toUpperCase())){
+				score += 1;
+			}
+			if (two.contains(new String(c).toUpperCase())){
+				score += 2;
+			}
+			if (three.contains(new String(c).toUpperCase())){
+				score += 3;
+			}
+			if (four.contains(new String(c).toUpperCase())){
+				score += 4;
+			}
+			if (five.contains(new String(c).toUpperCase())){
+				score += 5;
+			}
+			if (eight.contains(new String(c).toUpperCase())){
+				score += 8;
+			}
+			if (ten.contains(new String(c).toUpperCase())){
+				score += 10;
+			}
+			
+		}
+		
+		
+		return score;
 	}
 
 	/**
@@ -136,6 +205,7 @@ public class EvaluationService {
 	 * The format is usually represented as
 	 * 
 	 * 1 (NXX)-NXX-XXXX where N is any digit from 2 through 9 and X is any digit
+	 *    0    3   6 
 	 * from 0 through 9.
 	 * 
 	 * Your task is to clean up differently formatted telephone numbers by removing
@@ -152,8 +222,35 @@ public class EvaluationService {
 	 * NANP-countries, only 1 is considered a valid country code.
 	 */
 	public String cleanPhoneNumber(String string) {
-		// TODO Write an implementation for this method declaration
-		return null;
+		
+		char[] number = new char[10];
+		
+		int k = 0;
+		String N = "23456789";
+		String X = "0123456789";
+		for(int i = 0; i < string.length(); i++) {
+			char[] c =new char[1]; 
+			c[0] = string.charAt(i);
+			if (k == 10 && X.contains(new String(c))) {
+				throw new IllegalArgumentException();
+			}
+			else if((k == 0 || k == 3) && N.contains(new String(c))) {
+				number[k] = c[0];
+				k++;
+			}
+			else if ((k != 0 && k != 3) && X.contains(new String(c))) {
+				number[k] = c[0];
+				k++;
+			}
+		}
+		
+	
+		if( k != 10) {
+			throw new IllegalArgumentException(); 
+		}
+		
+		return new String(number);
+		
 	}
 
 	/**
@@ -166,8 +263,18 @@ public class EvaluationService {
 	 * @return
 	 */
 	public Map<String, Integer> wordCount(String string) {
-		// TODO Write an implementation for this method declaration
-		return null;
+		String[] split = string.split("\\W");
+		Map<String, Integer> output = new HashMap<String, Integer>();
+		for (String x :split) {
+			if (output.containsKey(x) == false) {
+				output.putIfAbsent(x, 1);
+			}
+			else {
+				output.put(x, output.get(x) + 1);
+			}
+		}
+		output.remove("");
+		return output;
 	}
 
 	/**
@@ -205,11 +312,41 @@ public class EvaluationService {
 	 * binary search is a dichotomic divide and conquer search algorithm.
 	 * 
 	 */
-	static class BinarySearch<T> {
+	static class BinarySearch<T extends Comparable<T>> {
 		private List<T> sortedList;
 
 		public int indexOf(T t) {
 			// TODO Write an implementation for this method declaration
+			
+			boolean search = true;
+			 
+			List<T> find = getSortedList();
+			int mid = find.size() /2;
+			int bot = 0;
+			int top = find.size() -1;
+			while (search) {
+
+				T compare = find.get(mid);
+				if ((t.compareTo(compare) == 0)){
+					return  mid;
+				}
+				
+				else if (t.compareTo(compare) < 0){
+					top = mid;
+					mid = (top - bot)/2;
+				}
+				else if (t.compareTo(compare) > 0) {
+					bot = mid;
+					mid = (top - bot)/2 + mid;
+					if(top - bot == 1) {
+						mid = top;
+					}
+				}
+				else
+					return -1;
+				
+			}
+			
 			return 0;
 		}
 
@@ -245,9 +382,70 @@ public class EvaluationService {
 	 * @param string
 	 * @return
 	 */
+	private String toPigLatinWord(String string) {
+		char[] pigLatin = new char[string.length()+2];
+		String vowel = "aeiou";
+		char[] fl = new char[1];
+		fl[0]=string.charAt(0);
+		int start = 1;
+		boolean th = false;
+		boolean qu = false;
+		if (string.charAt(0) == 's' && string.charAt(1) == 'c' && string.charAt(2) == 'h') {
+			start = 3;
+		}
+		else if (string.charAt(0) == 't' && string.charAt(1) == 'h' ) {
+			start = 2;
+			th = true;
+		}
+		else if (string.charAt(0) == 'q' && string.charAt(1) == 'u' ) {
+			start = 2;
+			qu = true;
+		}
+		else if(vowel.contains(new String(fl))){
+			start = 0;
+		}
+		for (int i = start; i < string.length(); i++) {
+			pigLatin[i - start] = string.charAt(i);
+		}
+		if(start == 1) {
+			pigLatin[string.length() - 1] = fl[0];
+		}
+		if (th == true) {
+			pigLatin[string.length() - 2] = 't';
+			pigLatin[string.length() - 1] = 'h';
+		}
+		if (qu == true) {
+			pigLatin[string.length() - 2] = 'q';
+			pigLatin[string.length() - 1] = 'u';
+		}
+		if (start == 3) {
+			pigLatin[string.length() - 3] = 's';
+			pigLatin[string.length() - 2] = 'c';
+			pigLatin[string.length() - 1] = 'h';
+		}
+		pigLatin[string.length()] = 'a';
+		pigLatin[string.length() + 1] = 'y';
+		
+		
+		return new String(pigLatin);
+	}
 	public String toPigLatin(String string) {
-		// TODO Write an implementation for this method declaration
-		return null;
+		String[] splitWords = string.split(" ");
+		int i = 0;
+		char[] output = new char[string.length() + (2 * splitWords.length)];
+		for (String x : splitWords) {
+			if (output[0] != '\0') {
+				output[i] =' ';
+				i++;
+			}
+			String input = toPigLatinWord(x);
+			for (int j = 0; j < input.length(); j++) {
+				output[i] = input.charAt(j);
+				i++;
+			}
+		}
+		//System.out.println(output);
+		return new String(output);
 	}
 
 	/**
@@ -266,7 +464,19 @@ public class EvaluationService {
 	 * @return
 	 */
 	public boolean isArmstrongNumber(int input) {
-		// TODO Write an implementation for this method declaration
+		
+		String number = Integer.toString(input);
+		int power = number.length();
+		int sum = 0;
+		for (int i = 0; i < power; i++) {
+			char[] hold = new char[1];
+			hold[0] = number.charAt(i);
+			int current = Integer.parseInt(new String(hold));
+			sum += (int) Math.pow(current, power);
+		}
+		if (sum == input) {
+			return true;
+		}
 		return false;
 	}
 
@@ -281,8 +491,19 @@ public class EvaluationService {
 	 * @return
 	 */
 	public List<Long> calculatePrimeFactorsOf(long l) {
-		// TODO Write an implementation for this method declaration
-		return null;
+		
+		List<Long> output = new ArrayList<Long>();
+		long input = l;
+		
+		for (long i = 2; i <= input; i++) {
+			while(input % i == 0) {
+				output.add(i);
+				input = input / i;
+			}
+			
+		}
+		
+		return output;
 	}
 
 	/**
