@@ -1,6 +1,12 @@
 package com.revature.eval.java.core;
 
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
+import java.time.temporal.TemporalAmount;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -773,8 +779,11 @@ public class EvaluationService {
 	 * @return
 	 */
 	public Temporal getGigasecondDate(Temporal given) {
-		// TODO Write an implementation for this method declaration
-		return null;
+		if (given.isSupported(ChronoUnit.SECONDS) == false) {
+			given = LocalDateTime.of((LocalDate) given, LocalTime.of(0, 0, 0));
+		}
+		return (given.plus(Duration.ofSeconds(1000000000)));
+		
 	}
 
 	/**
@@ -791,8 +800,16 @@ public class EvaluationService {
 	 * @return
 	 */
 	public int getSumOfMultiples(int i, int[] set) {
-		// TODO Write an implementation for this method declaration
-		return 0;
+		int sum = 0;
+		for (int j = 0; j < i; j++) {
+			for (int k : set) {
+				if(j % k == 0) {
+					sum += j;
+					break;
+				}
+			}
+		}
+		return sum;
 	}
 
 	/**
@@ -832,8 +849,34 @@ public class EvaluationService {
 	 * @return
 	 */
 	public boolean isLuhnValid(String string) {
-		// TODO Write an implementation for this method declaration
-		return false;
+			string = string.replaceAll(" ","");
+			//removes everything but numeric
+			String test = string.replaceAll("\\d", "");
+			//contains non whitespace/numeric
+			if(!test.isEmpty()) {
+				return false;
+			}
+			int sum = 0;
+			boolean second = false;
+			for (int i = string.length() - 1; i >= 0; i--) {
+				if(second) {
+					int num = Integer.parseInt(Character.toString(string.charAt(i)));
+					num *= 2 ;
+					if( num > 9) {
+						num -=9;
+					}
+					sum += num;
+				}
+				else {
+					sum += Integer.parseInt(Character.toString(string.charAt(i)));
+				}
+				second = !second;
+			}
+			
+			if(sum % 10 == 0) {
+				return true;
+			}
+			return false;
 	}
 
 	/**
@@ -864,7 +907,38 @@ public class EvaluationService {
 	 * @return
 	 */
 	public int solveWordProblem(String string) {
-		// TODO Write an implementation for this method declaration
+		int a = 0;
+		int b = 0;
+		string = string.replaceAll("\\?","");
+		String[] parse = string.split(" ");
+		boolean secondInt = false;
+		for (String x : parse) {
+			try {
+				if(secondInt == false) {
+					a = Integer.parseInt(x);
+					secondInt = true;
+				}
+				else {
+					b = Integer.parseInt(x);
+				}
+			}catch (Exception e){
+				
+			}
+
+		}
+		if(string.contains("plus")) {
+			return a + b;
+		}
+		else if(string.contains("minus")) {
+			return a - b;
+		}
+		else if (string.contains("multiplied")) {
+			return a * b;
+		}
+			
+		else if(string.contains("divided")) {
+			return a / b;
+		}
 		return 0;
 	}
 
